@@ -45,8 +45,10 @@ func TestLogLevel(t *testing.T) {
 
 func TestDefaultCLIOptionsMatchDefaultConfig(t *testing.T) {
 	cfg := configForArgs(t, addRequiredArgs())
+	rollupCfg, err := chaincfg.GetRollupConfig(nil, "op-goerli")
+	require.NoError(t, err)
 	defaultCfg := config.NewConfig(
-		&chaincfg.Goerli,
+		rollupCfg,
 		chainconfig.OPGoerliChainConfig,
 		common.HexToHash(l1HeadValue),
 		common.HexToHash(l2HeadValue),
@@ -77,13 +79,14 @@ func TestNetwork(t *testing.T) {
 		require.Equal(t, chaincfg.Goerli, *cfg.Rollup)
 	})
 
-	for name, cfg := range chaincfg.NetworksByName {
+	for _, name := range chaincfg.AvailableNetworks() {
 		name := name
-		expected := cfg
+		expected, err := chaincfg.GetRollupConfig(nil, name)
+		require.NoError(t, err)
 		t.Run("Network_"+name, func(t *testing.T) {
 			args := replaceRequiredArg("--network", name)
 			cfg := configForArgs(t, args)
-			require.Equal(t, expected, *cfg.Rollup)
+			require.Equal(t, *expected, *cfg.Rollup)
 		})
 	}
 }

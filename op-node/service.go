@@ -182,12 +182,12 @@ Startup will proceed to use the network-parameter and ignore the rollup config.
 Conflicting configuration is deprecated, and will stop the op-node from starting in the future.
 `, "network", network, "rollup_config", rollupConfigPath)
 		}
-		config, err := chaincfg.GetRollupConfig(network)
+		config, err := chaincfg.GetRollupConfig(nil, network)
 		if err != nil {
 			return nil, err
 		}
 
-		return &config, nil
+		return config, nil
 	}
 
 	file, err := os.Open(rollupConfigPath)
