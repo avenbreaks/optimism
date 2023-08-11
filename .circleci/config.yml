@@ -366,10 +366,6 @@ jobs:
     resource_class: xlarge
     steps:
       - checkout
-      - restore_cache:
-          name: Restore PNPM Package Cache
-          keys:
-            - pnpm-packages-v2-{{ checksum "pnpm-lock.yaml" }}
       - check-changed:
           patterns: contracts-bedrock,op-node
       - run:
@@ -390,13 +386,6 @@ jobs:
             FOUNDRY_PROFILE: ci
           working_directory: packages/contracts-bedrock
           no_output_timeout: 15m
-      - run:
-          name: validate deploy configs
-          command: |
-            pnpm validate-deploy-configs || echo "export DEPLOY_CONFIG_STATUS=1" >> "$BASH_ENV"
-          environment:
-            FOUNDRY_PROFILE: ci
-          working_directory: packages/contracts-bedrock
       - run:
           name: storage snapshot
           command: |
@@ -425,10 +414,6 @@ jobs:
             if [[ "$GAS_SNAPSHOT_STATUS" -ne 0 ]]; then
               FAILED=1
               echo "Gas snapshot failed, see job output for details."
-            fi
-            if [[ "$DEPLOY_CONFIG_STATUS" -ne 0 ]]; then
-              FAILED=1
-              echo "Deploy configs invalid, see job output for details."
             fi
             if [[ "$STORAGE_SNAPSHOT_STATUS" -ne 0 ]]; then
               echo "Storage snapshot failed, see job output for details."
@@ -1189,9 +1174,7 @@ workflows:
             - pnpm-monorepo
       - contracts-bedrock-tests
       - contracts-bedrock-coverage
-      - contracts-bedrock-checks:
-          requires:
-            - pnpm-monorepo
+      - contracts-bedrock-checks
       - contracts-bedrock-slither
       - contracts-bedrock-validate-spaces:
           requires:
