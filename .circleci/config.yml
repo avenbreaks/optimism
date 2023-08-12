@@ -369,6 +369,10 @@ jobs:
       - check-changed:
           patterns: contracts-bedrock,op-node
       - run:
+          name: install deps
+          command: pnpm install
+          working_directory: packages/contracts-bedrock
+      - run:
           name: build contracts
           command: pnpm build
           working_directory: packages/contracts-bedrock
