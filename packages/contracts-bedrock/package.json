@@ -16,7 +16,7 @@
     "prebuild": "./scripts/verify-foundry-install.sh",
     "build:differential": "go build -o ./scripts/differential-testing/differential-testing ./scripts/differential-testing",
     "build:fuzz": "(cd test-case-generator && go build ./cmd/fuzz.go)",
-    "autogen:invariant-docs": "ts-node scripts/invariant-doc-gen.ts",
+    "autogen:invariant-docs": "npx ts-node scripts/invariant-doc-gen.ts",
     "test": "pnpm build:differential && pnpm build:fuzz && forge test",
     "coverage": "pnpm build:differential && pnpm build:fuzz && forge coverage",
     "coverage:lcov": "pnpm build:differential && pnpm build:fuzz && forge coverage --report lcov",
